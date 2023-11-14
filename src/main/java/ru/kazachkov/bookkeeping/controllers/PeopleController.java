@@ -4,10 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 import ru.kazachkov.bookkeeping.dao.PersonDao;
 import ru.kazachkov.bookkeeping.models.Person;
 
@@ -36,6 +34,30 @@ public class PeopleController {
 	@PostMapping()
 	public String createNewPerson(@ModelAttribute("person") Person person) {
 		personDao.save(person);
+		return "redirect:/people";
+	}
+
+	@GetMapping("/{id}")
+	public String showPerson(@PathVariable("id") int id, Model model) {
+		model.addAttribute("person", personDao.getPersonById(id));
+		return "people/person";
+	}
+
+	@GetMapping("/{id}/edit")
+	public String editPerson(@PathVariable("id") int id, Model model) {
+		model.addAttribute("person", personDao.getPersonById(id));
+		return "people/edit";
+	}
+
+	@PatchMapping("/{id}")
+	public String update(@ModelAttribute("person")Person person, @PathVariable("id") int id) {
+		personDao.update(id, person);
+		return "redirect:/people";
+	}
+
+	@DeleteMapping("/{id}")
+	public String delete(@PathVariable("id") int id) {
+		personDao.delete(id);
 		return "redirect:/people";
 	}
 }
