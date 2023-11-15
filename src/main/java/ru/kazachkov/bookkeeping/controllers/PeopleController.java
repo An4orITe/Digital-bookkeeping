@@ -40,6 +40,7 @@ public class PeopleController {
 	@GetMapping("/{id}")
 	public String showPerson(@PathVariable("id") int id, Model model) {
 		model.addAttribute("person", personDao.getPersonById(id));
+		model.addAttribute("personBooks", personDao.getPersonBooksByPersonId(id));
 		return "people/person";
 	}
 
@@ -50,7 +51,7 @@ public class PeopleController {
 	}
 
 	@PatchMapping("/{id}")
-	public String update(@ModelAttribute("person")Person person, @PathVariable("id") int id) {
+	public String updatePerson(@ModelAttribute("person")Person person, @PathVariable("id") int id) {
 		personDao.update(id, person);
 		return "redirect:/people";
 	}
