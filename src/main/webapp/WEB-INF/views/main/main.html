@@ -1,0 +1,16 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Главная страница</title>
+</head>
+<body>
+  <form th:method="GET" th:action="@{/people}">
+    <input type="submit" value="Читатели">
+  </form>
+  <br/>
+  <form th:method="GET" th:action="@{/books}">
+  <input type="submit" value="Книги">
+  </form>
+</body>
+</html>

@@ -1,14 +1,22 @@
 package ru.kazachkov.bookkeeping.models;
 
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
+
 public class Person {
 
 	private int id;
+
+	@NotEmpty(message = "Имя не должно быть пустым")
+	@Size(min = 2, max = 100, message = "Имя должно быть от 2 до 100 символов длиной")
 	private String name;
+
+	@Min(value = 1900, message = "Год рождения должен быть больше, чем 1900")
 	private int birthYear;
 
-	public Person(int id, String name, int birthYear) {
-		this.id = id;
+	public Person(String name, int birthYear) {
 		this.name = name;
 		this.birthYear = birthYear;
 	}
@@ -35,7 +43,4 @@ public class Person {
 		return birthYear;
 	}
 
-	public void setBirthYear(int birthYear) {
-		this.birthYear = birthYear;
-	}
 }

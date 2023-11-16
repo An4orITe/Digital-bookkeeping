@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import ru.kazachkov.bookkeeping.models.Book;
 import ru.kazachkov.bookkeeping.models.Person;
 
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.Optional;
 @Component
 public class PersonDao {
 
-	JdbcTemplate jdbcTemplate;
+	private final JdbcTemplate jdbcTemplate;
 
 	@Autowired
 	public PersonDao(JdbcTemplate jdbcTemplate) {
@@ -28,7 +29,7 @@ public class PersonDao {
 	}
 
 	public Person getPersonById(int id) {
-		return jdbcTemplate.query("SELECT * FROM Person where id=?", new Object[]{id}, new BeanPropertyRowMapper<>(Person.class))
+		return jdbcTemplate.query("SELECT * FROM Person where id=?", new BeanPropertyRowMapper<>(Person.class), new Object[]{id})
 				.stream().findAny().orElse(null);
 	}
 
@@ -38,5 +39,14 @@ public class PersonDao {
 
 	public void delete(int id) {
 		jdbcTemplate.update("DELETE FROM person where id=?", id);
+	}
+
+	public List<Book> getPersonBooksByPersonId(int id) {
+		return jdbcTemplate.query("SELECT * FROM Book where person_id=?", new BeanPropertyRowMapper<>(Book.class), id);
+	}
+
+	public Optional<Person> getPersonByFullName(String name) {
+		return jdbcTemplate.query("SELECT * FROM Person WHERE name=?", new BeanPropertyRowMapper<>(Person.class), new Object[]{name})
+				.stream().findAny();
 	}
 }

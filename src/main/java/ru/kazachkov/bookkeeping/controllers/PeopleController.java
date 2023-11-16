@@ -1,23 +1,26 @@
 package ru.kazachkov.bookkeeping.controllers;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.kazachkov.bookkeeping.dao.PersonDao;
 import ru.kazachkov.bookkeeping.models.Person;
+import ru.kazachkov.bookkeeping.util.PersonValidator;
 
 @Controller
 @RequestMapping("/people")
 public class PeopleController {
 
-	PersonDao personDao;
+	private final PersonDao personDao;
+	private final PersonValidator personValidator;
 
 	@Autowired
-	public PeopleController(PersonDao personDao) {
+	public PeopleController(PersonDao personDao, PersonValidator personValidator) {
 		this.personDao = personDao;
+		this.personValidator = personValidator;
 	}
 
 	@GetMapping
@@ -32,7 +35,11 @@ public class PeopleController {
 	}
 
 	@PostMapping()
-	public String createNewPerson(@ModelAttribute("person") Person person) {
+	public String createNewPerson(@ModelAttribute("person") @Valid Person person, BindingResult bindingResult) {
+		personValidator.validate(person, bindingResult);
+		if (bindingResult.hasErrors()) {
+			return "people/new";
+		}
 		personDao.save(person);
 		return "redirect:/people";
 	}
@@ -51,7 +58,11 @@ public class PeopleController {
 	}
 
 	@PatchMapping("/{id}")
-	public String updatePerson(@ModelAttribute("person")Person person, @PathVariable("id") int id) {
+	public String updatePerson(@ModelAttribute("person") @Valid Person person, @PathVariable("id") int id,
+							   BindingResult bindingResult) {
+		if (bindingResult.hasErrors()) {
+			return "people/edit";
+		}
 		personDao.update(id, person);
 		return "redirect:/people";
 	}
